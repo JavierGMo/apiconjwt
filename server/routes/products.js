@@ -57,7 +57,7 @@ router.get('/products/user', verifyToken, async function(req, res){
 });
 
 //Buscar producto por nombre
-router.get('/product/search/:name', verifyToken, async function(req, res){
+router.get('/products/search/:name', verifyToken, async function(req, res){
     try {
         const connection = await getConnection();
         const nameProduct = `%${req.params.name}%`;
@@ -83,7 +83,7 @@ router.get('/product/search/:name', verifyToken, async function(req, res){
 });
 
 //Buscar producto por id
-router.get('/product/:id', verifyToken, async function(req, res){
+router.get('/products/:id', verifyToken, async function(req, res){
     try {
         const connection = await getConnection();
         const idProducto = req.params.id;
@@ -110,7 +110,7 @@ router.get('/product/:id', verifyToken, async function(req, res){
 
 //Crear producto
 
-router.post('/product', verifyToken, async function(req, res){
+router.post('/products', verifyToken, async function(req, res){
     
     const body = req.body;
     const idUser = req.dataUser.user.id;
@@ -147,6 +147,61 @@ router.post('/product', verifyToken, async function(req, res){
         }
     }
 
+});
+
+
+router.put('/products/buy', verifyToken, async function(req, res){
+    const body = req.body;
+
+    const idProducto = body.idproducto;
+    const piecesNow = body.pieces;
+    const idUser = req.dataUser.user.id;
+
+    try {
+        
+        const connection = await getConnection();
+        const [rows] = await connection.query(
+            'UPDATE product SET pieces = ? WHERE id = ?',
+            [piecesNow, idProducto]
+        );
+        console.log(rows);
+        
+        res.json({
+            ok : true,
+            message : 'success'
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
+    }
+
+
+});
+
+router.delete('/products/:id', verifyToken,async function(req, res){
+    const idProduct = req.params.id;
+    try {
+        const connection = await getConnection();
+        const [rows] = await connection.query(
+            'DELETE FROM product WHERE id = ?',
+            [idProduct]
+        );
+        console.log(rows);
+        res.json({
+            ok : true,
+            message : 'success'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
+    } 
 });
 
 export default router;
