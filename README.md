@@ -1,7 +1,14 @@
 # API con JWT
 
 ## Instalar dependencias 
+
 `npm install`
+## NODEMON
+ Se necesita nodemon, se instala con los siguientes comandos: 
+- Global: `npm i -g nodemon`
+- Dependencia de desarrollo: `npm i --save-dev nodemon`
+
+
 
 ## Base de datos
 Esta API se conecta con MySQL asi que deben tener instalado este para poder usar esta API.
