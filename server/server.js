@@ -1,13 +1,18 @@
 import './config/config.js';
+import cors from 'cors';
 import express, { urlencoded, json } from 'express';
 import routes from './routes/index.js';
 
 const app = express();
 
+app.use(cors());
+
 //Parse application application/x-www-form-urlencoded
 app.use(urlencoded({
     extended : false
 }));
+
+
 
 
 //Para application/json

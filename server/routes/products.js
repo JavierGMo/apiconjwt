@@ -26,6 +26,10 @@ router.get('/products', verifyToken, async function(req, res){
         }
     } catch (error) {
         console.error(`Error : ${error}`);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
     }
 });
 
@@ -53,6 +57,10 @@ router.get('/products/user', verifyToken, async function(req, res){
         }
     } catch (error) {
         console.error(`Error : ${error}`);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
     }
 });
 
@@ -79,6 +87,10 @@ router.get('/products/search/:name', verifyToken, async function(req, res){
         }
     } catch (error) {
         console.error(`Error : ${error}`);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
     }
 });
 
@@ -105,11 +117,14 @@ router.get('/products/:id', verifyToken, async function(req, res){
         }
     } catch (error) {
         console.error(`Error : ${error}`);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
+        });
     }
 });
 
-//Crear producto
-
+//Create product
 router.post('/products', verifyToken, async function(req, res){
     
     const body = req.body;
@@ -118,17 +133,25 @@ router.post('/products', verifyToken, async function(req, res){
     try {
         
         const connection = await getConnection();
-        const rows = await connection.query(
+        const [rows] = await connection.query(
             'INSERT INTO product (id, name, price, pieces, iduser) VALUES (NULL, ?, ?, ?, ?)',
             [body.name, body.price, body.pieces, idUser]
         );
 
         console.log(rows);
-
-        res.json({
-            ok : true,
-            message : 'success'
-        });
+        if(rows !== undefined && rows !== null && rows['affectedRows'] !== undefined && rows['affectedRows'] !== 0){
+            res.json({
+                ok : true,
+                message : 'success',
+                data : rows['insertId']
+            });
+        }else{
+            res.status(404).json({
+                ok : false,
+                message : 'error: syntax error request'
+            });
+        }
+        
 
         
 
@@ -165,11 +188,19 @@ router.put('/products/buy', verifyToken, async function(req, res){
             [piecesNow, idProducto]
         );
         console.log(rows);
-        
-        res.json({
-            ok : true,
-            message : 'success'
-        });
+
+        if(rows !== undefined && rows !== null && rows['affectedRows'] !== undefined && rows['affectedRows'] !== 0){
+            res.json({
+                ok : true,
+                message : 'success',
+                data : 'update'
+            });
+        }else{
+            res.status(404).json({
+                ok : false,
+                message : 'error: syntax error, not update'
+            });
+        }
 
     } catch (error) {
         console.error(error);
@@ -191,10 +222,18 @@ router.delete('/products/:id', verifyToken,async function(req, res){
             [idProduct]
         );
         console.log(rows);
-        res.json({
-            ok : true,
-            message : 'success'
-        });
+        if(rows !== undefined && rows !== null && rows['affectedRows'] !== undefined && rows['affectedRows'] !== 0){
+            res.json({
+                ok : true,
+                message : 'success',
+                data : 'delete'
+            });
+        }else{
+            res.status(404).json({
+                ok : false,
+                message : 'error: syntax error, not delete'
+            });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({

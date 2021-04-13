@@ -8,13 +8,17 @@ const router = express.Router();
 
 router.post('/login', async function(req, res){
     
-    const body = req.body;
+    
 
     try {
-        
+        const body = req.body;
+        console.log(body);
         const connection = await getConnection();
         
-        const [rows] = await connection.execute('SELECT id, firstname, lastname, username, email FROM user WHERE (username=? OR email=?) AND password=?', [body.user, body.user, body.password]);
+        const [rows] = await connection.execute(
+            'SELECT id, firstname, lastname, username, email FROM user WHERE (username=? OR email=?) AND password=?',
+            [body.user, body.user, body.password]
+        );
 
 
         if(rows !== undefined && rows !== null && rows.length!==0){
