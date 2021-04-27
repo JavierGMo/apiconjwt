@@ -11,6 +11,7 @@ function verifyToken(req, res, next){
         // console.log(`request token : ${req.token}`);
         jwt.verify(bearerToken, 'secret-key', function(error, decodedData){
             if(error){
+                console.error(`Error token: ${error}`);
                 res.status(403).json({
                     ok : false,
                     message : 'Denegate'
@@ -21,6 +22,7 @@ function verifyToken(req, res, next){
             }
         });
     }else{
+        console.error(`Error token: token invalid`);
         res.status(403).json({
             ok : false,
             message : 'denegate: invalid header'
