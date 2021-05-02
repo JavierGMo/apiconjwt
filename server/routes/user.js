@@ -8,11 +8,14 @@ const router = express.Router();
 router.get('/user/profile', verifyToken, async function(req, res){
     const body = req.body;
     try {
+        const idUser = req.dataUser.user.id;
+        const email = req.dataUser.user.email;
+        const userName= req.dataUser.user.username;
         const connection = await getConnection();
 
         const [rows] = await connection.execute(
-            'SELECT firstname, lastname, username FROM user WHERE (email=? OR username=?) AND password=?',
-            [body.user, body.user, body.password]
+            'SELECT firstname, lastname, username FROM user WHERE id=? AND email=? AND username=? ',
+            [idUser, email, userName]
         );
         if(rows.length>0){
             res.json({
@@ -55,7 +58,8 @@ router.put('/user/changepassword', [verifyToken], async function(req, res){
         res.status(500).json({
             ok : false,
             message : 'Server error'
-        });
+        });    
+        
     }
 });
 
@@ -81,6 +85,39 @@ router.put('/user/update', verifyToken, async function(req, res){
         res.status(500).json({
             ok : false,
             message : 'Server error'
+        });
+    }
+});
+
+router.delete('/user', verifyToken, async function(req, res){
+    
+    try {
+        
+        const idUser = req.dataUser.user.id;
+        
+        const connection = await getConnection();
+        
+        const [rows] = await connection.query(
+            'DELETE FROM user WHERE id = ?',
+            [idUser]
+        );
+        if(rows !== undefined && rows !== null && rows['affectedRows'] !== undefined && rows['affectedRows'] !== 0){
+            res.json({
+                ok : true,
+                message : 'success',
+                data : 'delete'
+            });
+        }else{
+            res.status(404).json({
+                ok : false,
+                message : 'error: syntax error, not delete'
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            ok : false,
+            message : `Error : ${error}`
         });
     }
 });
