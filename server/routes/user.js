@@ -17,6 +17,8 @@ router.get('/user/profile', verifyToken, async function(req, res){
             'SELECT firstname, lastname, username FROM user WHERE id=? AND email=? AND username=? ',
             [idUser, email, userName]
         );
+        console.log(`${rows}`);
+        
         if(rows.length>0){
             res.json({
                 ok : true,
@@ -43,10 +45,11 @@ router.put('/user/changepassword', [verifyToken], async function(req, res){
     const body = req.body;
     try {
         const idUser = req.dataUser.user.id;
+        const email = req.dataUser.user.email;
         const connection = await getConnection();
         const [rows] = await connection.query(
             'UPDATE user SET password = ?  WHERE id = ? AND email=?',
-            [body.password, idUser, body.email]
+            [body.password, idUser, email]
         );
         console.log(rows);
         res.json({
