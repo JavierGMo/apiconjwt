@@ -1,18 +1,20 @@
 import './config/config.js';
 import cors from 'cors';
 import express, { urlencoded, json } from 'express';
+// import fileUpload from 'express-fileupload';
+import busboyBodyParser  from 'busboy-body-parser';
 import routes from './routes/index.js';
 
 const app = express();
 
 app.use(cors());
-
+// app.use(fileUpload());
 //Parse application application/x-www-form-urlencoded
 app.use(urlencoded({
     extended : false
 }));
 
-
+app.use(busboyBodyParser());
 
 
 //Para application/json

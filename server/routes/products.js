@@ -1,8 +1,13 @@
 import express from 'express';
 import verifyToken from '../middlewares/auth.js';
+import uploadVideo from '../middlewares/uploadvideo.js';
 import getConnection from '../database/db.js';
 
+
+
 const router = express.Router();
+
+
 
 
 
@@ -170,7 +175,7 @@ router.get('/products/pagination/range/:pos', async function(req, res){
 
 
 //Create product
-router.post('/products', verifyToken, async function(req, res){
+router.post('/products', [verifyToken, uploadVideo], async function(req, res){
     
     const body = req.body;
     const idUser = req.dataUser.user.id;
@@ -179,7 +184,7 @@ router.post('/products', verifyToken, async function(req, res){
         
         const connection = await getConnection();
         const [rows] = await connection.query(
-            'INSERT INTO product (id, name, price, pieces, iduser) VALUES (NULL, ?, ?, ?, ?)',
+            'INSERT INTO product (id, name, price, pieces, videourl, plan, iduser) VALUES (NULL, ?, ?, ?, ?)',
             [body.name, body.price, body.pieces, idUser]
         );
 

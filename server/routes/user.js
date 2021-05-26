@@ -91,7 +91,7 @@ router.put('/user/update', verifyToken, async function(req, res){
         });
     }
 });
-
+//Borrar cuenta permanentemente
 router.delete('/user', verifyToken, async function(req, res){
     
     try {
